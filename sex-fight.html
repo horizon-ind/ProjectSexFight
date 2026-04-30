@@ -358,9 +358,20 @@ function renderSkills() {
     grid.appendChild(skipBtn);
 }
 
+function setInputDisabled(disabled) {
+    const grid = document.getElementById('skill_grid');
+    grid.querySelectorAll('.skill-btn, .skip-btn').forEach(btn => {
+        btn.style.pointerEvents = disabled ? 'none' : '';
+        btn.style.opacity = disabled
+            ? (btn.style.opacity === '1' || btn.style.opacity === '' ? '0.45' : btn.style.opacity)
+            : '';
+    });
+}
+
 function playerUseSkill(skill) {
     if (gameOver) return;
 
+    setInputDisabled(true);
     round++;
     log(`<b>第 ${round} 回合 —— 你使用了「${skill.name}」</b>`, "#ff99cc");
 
@@ -386,12 +397,13 @@ function playerUseSkill(skill) {
     updateUI();
     if (checkGameOver()) return;
 
-    setTimeout(enemyTurn, 800);
+    setTimeout(enemyTurn, 1500);
 }
 
 function skipTurn() {
     if (gameOver) return;
 
+    setInputDisabled(true);
     round++;
     const heal = Math.floor(Math.random() * 11) + 3;
     const selfPleasure = Math.floor(Math.random() * 5) + 3;
@@ -405,7 +417,7 @@ function skipTurn() {
     updateUI();
     if (checkGameOver()) return;
 
-    setTimeout(enemyTurn, 700);
+    setTimeout(enemyTurn, 1500);
 }
 
 function enemyTurn() {
@@ -435,7 +447,9 @@ function enemyTurn() {
 
     updateUI();
     renderSkills();
-    checkGameOver();
+    if (!checkGameOver()) {
+        setInputDisabled(false);
+    }
 }
 
 function checkGameOver() {
