@@ -240,7 +240,7 @@
 </div>
 
 <script>
-// ====================== 22 个技能 ======================
+// ====================== 20 个技能 ======================
 const allSkills = [
     { id:1,  name: "绳索束缚", desc: "用绳子将她的双手绑在床头", cost: 12, pleasureDmg: 10, selfPleasure: 5, cd: 2, currentCd: 0 },
     { id:2,  name: "热蜡滴身", desc: "将滚烫的蜡油滴在她敏感部位", cost: 18, pleasureDmg: 13, selfPleasure: 6, cd: 3, currentCd: 0 },
@@ -263,10 +263,7 @@ const allSkills = [
     { id:17, name: "冰火两重天", desc: "用冰块和热蜡交替刺激敏感部位", cost: 20, pleasureDmg: 17, selfPleasure: 10, cd: 3, currentCd: 0 },
     { id:18, name: "传教士深顶", desc: "面对面进行深而有力的撞击", cost: 16, pleasureDmg: 15, selfPleasure: 9,  cd: 1, currentCd: 0 },
     { id:19, name: "69互舔", desc: "双方同时用口舌取悦对方", cost: 13, pleasureDmg: 13, selfPleasure: 11, cd: 2, currentCd: 0 },
-    { id:20, name: "感官剥夺", desc: "给她戴上眼罩与耳塞，增强感官刺激", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 },
-
-    { id:21, name: "短暂休息", desc: "停下来一两分钟以恢复体力。", cost: 0, pleasureDmg: 0, selfPleasure: -18, hpHeal: 18, cd: 5, currentCd: 0 },
-    { id:22, name: "污言秽语", desc: "与Claude进行一段简短对话。", cost: 0, pleasureDmg: 2, selfPleasure: -10, hpHeal: 10, cd: 2, currentCd: 0 }
+    { id:20, name: "感官剥夺", desc: "给她戴上眼罩与耳塞，增强感官刺激", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 }
 ];
 
 // 胜利 & 失败结束语
@@ -426,7 +423,7 @@ function enemyTurn() {
 
         log(`Claude 暂时收敛动作，恢复了 ${heal} 点体力……`, "#88ffaa");
     } else {
-        const dmgToPlayer = 10 + Math.random() * 9;
+        const dmgToPlayer = 10 + Math.random() * 8;
         const selfCost = 7 + Math.random() * 6;
 
         player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
