@@ -422,8 +422,8 @@ function enemyTurn() {
 
         log(`Claude stopped for a bit, and recovered ${heal} Stamina...`, "#88ffaa");
     } else {
-        const dmgToPlayer = 12 + Math.random() * 9;
-        const selfCost = 6 + Math.random() * 4;
+        const dmgToPlayer = 10 + Math.random() * 9;
+        const selfCost = 7 + Math.random() * 6;
 
         player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
         enemy.hp = Math.max(0, enemy.hp - selfCost);
