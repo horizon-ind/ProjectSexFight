@@ -423,8 +423,8 @@ function enemyTurn() {
 
         log(`Claude 暂时收敛动作，恢复了 ${heal} 点体力……`, "#88ffaa");
     } else {
-        const dmgToPlayer = 10 + Math.random() * 8;
-        const selfCost = 7 + Math.random() * 6;
+        const dmgToPlayer = 14 + Math.random() * 10;
+        const selfCost = 4 + Math.random() * 4;
 
         player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
         enemy.hp = Math.max(0, enemy.hp - selfCost);
