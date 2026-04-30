@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>性爱格斗 - 禁忌缠斗</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #1a0f1f;
+        color: #e0c0d0;
+        font-family: "Microsoft YaHei", system-ui, sans-serif;
+        min-height: 100vh;
+    }
+    #game {
+        max-width: 540px;
+        margin: 0 auto;
+        padding: 10px;
+    }
+    header {
+        text-align: center;
+        padding: 12px 0;
+        font-size: 1.45em;
+        color: #ff99cc;
+        letter-spacing: 2px;
+    }
+    .card {
+        background: #2a1a2f;
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 14px;
+        border: 1px solid #664455;
+    }
+    .character {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #ff99cc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        background: #3a253f;
+    }
+    .name { font-size: 1.25em; font-weight: bold; color: #ffccdd; }
+
+    .bars { display: flex; flex-direction: column; gap: 8px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 3px; }
+    .bar {
+        height: 20px;
+        background: #1f1424;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+    .hp-bar, .pleasure-bar { 
+        height: 100%; 
+        transition: width 0.8s ease-in-out;
+    }
+    .hp-bar { background: linear-gradient(90deg, #66cc99, #33aa77); }
+    .pleasure-bar { 
+        background: linear-gradient(90deg, #ff77bb, #ff3399);
+    }
+    .pleasure-bar.warning {
+        animation: warning 1.2s infinite alternate;
+    }
+    @keyframes warning { from {filter: brightness(1);} to {filter: brightness(1.65);} }
+
+    #log {
+        background: #1f1424;
+        border: 1px solid #664455;
+        border-radius: 16px;
+        padding: 14px;
+        height: 235px;
+        overflow-y: auto;
+        margin: 15px 0;
+        line-height: 1.55;
+        font-size: 0.95em;
+        scrollbar-width: thin;
+        scrollbar-color: #ff66aa #3a253f;
+    }
+
+    /* Custom Scrollbar for WebKit browsers (Chrome, Edge, Safari) */
+    #log::-webkit-scrollbar {
+        width: 8px;
+    }
+    #log::-webkit-scrollbar-track {
+        background: #2a1a2f;
+        border-radius: 10px;
+    }
+    #log::-webkit-scrollbar-thumb {
+        background: linear-gradient(#ff66aa, #cc3388);
+        border-radius: 10px;
+        border: 1px solid #ff99cc;
+    }
+    #log::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(#ff99cc, #ff3399);
+    }
+
+    .skills-title {
+        text-align: center;
+        margin: 12px 0 8px;
+        color: #ff99cc;
+        font-size: 1.15em;
+    }
+    .skills {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .skill-btn {
+        background: #3a253f;
+        border: 2px solid #885577;
+        border-radius: 14px;
+        padding: 12px 10px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .skill-btn:hover:not(:disabled) {
+        background: #552b5c;
+        border-color: #ff99cc;
+        transform: translateY(-3px);
+    }
+    .skill-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+    .skill-name { font-weight: bold; font-size: 1.05em; }
+    .skill-desc { font-size: 0.84em; opacity: 0.85; margin: 4px 0 4px; }
+    .skill-dmg { font-size: 0.82em; color: #ff99cc; margin-top: 2px; }
+    .skill-cost { font-size: 0.85em; color: #ffbb99; }
+
+    .skip-btn {
+        grid-column: 1 / -1;
+        background: #442233;
+        border: 2px solid #aa6688;
+        color: #ffccdd;
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 1.05em;
+        margin-top: 8px;
+        cursor: pointer;
+    }
+    .skip-btn:hover:not(:disabled) {
+        background: #663344;
+        border-color: #ff99cc;
+    }
+
+    #result {
+        position: fixed; inset: 0;
+        background: rgba(15,5,20,0.98);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        padding: 20px;
+        text-align: center;
+        animation: fadeIn 0.6s ease forwards;
+    }
+    #result.show { display: flex; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.85); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .result-title {
+        font-size: 2.2em;
+        margin: 10px 0 15px;
+        text-shadow: 0 0 15px currentColor;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+</style>
+</head>
+<body>
+
+<div id="game">
+    <header>ROUND <span id="round">1</span></header>
+
+    <div class="card">
+        <div class="character">
+            <div class="avatar">🦊</div>
+            <div><div class="name">You</div><div style="font-size:0.85em;opacity:0.8;">你</div></div>
+        </div>
+        <div class="bars">
+            <div>
+                <div class="bar-label">体力 <span id="player_hp_text">100/100</span></div>
+                <div class="bar"><div id="player_hp" class="hp-bar" style="width:100%"></div></div>
+            </div>
+            <div>
+                <div class="bar-label">快感 <span id="player_pleasure_text">0/100</span></div>
+                <div class="bar"><div id="player_pleasure" class="pleasure-bar" style="width:0%"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="character">
+            <div class="avatar">✨</div>
+            <div><div class="name">Claude</div><div style="font-size:0.85em;opacity:0.8;">性感挑逗的对手</div></div>
+        </div>
+        <div class="bars">
+            <div>
+                <div class="bar-label">体力 <span id="enemy_hp_text">100/100</span></div>
+                <div class="bar"><div id="enemy_hp" class="hp-bar" style="width:100%"></div></div>
+            </div>
+            <div>
+                <div class="bar-label">快感 <span id="enemy_pleasure_text">0/100</span></div>
+                <div class="bar"><div id="enemy_pleasure" class="pleasure-bar" style="width:0%"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="log"></div>
+
+    <div class="skills-title">- 选择你的招式 -</div>
+    <div class="skills" id="skill_grid"></div>
+</div>
+
+<div id="result">
+    <h2 id="result_title" class="result-title"></h2>
+    <p id="result_desc" style="max-width:460px; line-height:1.7; margin:15px 0;"></p>
+    <p id="stats"></p>
+    <button onclick="restartGame()" style="margin-top:25px; padding:15px 55px; font-size:1.1em; background:#552b5c; border:none; border-radius:14px; color:white;">
+        再来一局
+    </button>
+</div>
+
+<script>
+// ====================== 20 个技能 ======================
+const allSkills = [
+    { id:1,  name: "绳索束缚", desc: "用绳子将她的双手绑在床头", cost: 12, pleasureDmg: 10, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:2,  name: "热蜡滴身", desc: "将滚烫的蜡油滴在她敏感部位", cost: 18, pleasureDmg: 13, selfPleasure: 6, cd: 3, currentCd: 0 },
+    { id:3,  name: "皮鞭抽打", desc: "用皮鞭轻轻抽打她的胸部与大腿", cost: 15, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:4,  name: "窒息轻掐", desc: "轻轻掐住她的脖子，感受她的颤抖", cost: 20, pleasureDmg: 14, selfPleasure: 8, cd: 3, currentCd: 0 },
+    { id:5,  name: "口塞调教", desc: "塞住她的嘴，只让她发出呜咽", cost: 14, pleasureDmg: 10, selfPleasure: 4, cd: 2, currentCd: 0 },
+    { id:6,  name: "乳夹折磨", desc: "给她戴上乳夹并轻轻拉扯", cost: 16, pleasureDmg: 12, selfPleasure: 6, cd: 2, currentCd: 0 },
+    { id:7,  name: "深喉支配", desc: "抓住头发强迫她进行深喉", cost: 22, pleasureDmg: 15, selfPleasure: 9, cd: 3, currentCd: 0 },
+    { id:8,  name: "骑乘压制", desc: "强行骑在她身上猛烈抽插", cost: 25, pleasureDmg: 17, selfPleasure: 11, cd: 0, currentCd: 0 },
+    { id:9,  name: "女王调教", desc: "BDSM大招 - 多重刺激同时进行", cost: 35, pleasureDmg: 26, selfPleasure: 14, cd: 6, currentCd: 0 },
+    { id:10, name: "冷静调息", desc: "深呼吸恢复体力并平复快感", cost: 0, pleasureDmg: 0, selfPleasure: -18, hpHeal: 18, cd: 5, currentCd: 0 },
+
+    { id:11, name: "缓慢抽插", desc: "缓慢而深入地抽插她", cost: 14, pleasureDmg: 12, selfPleasure: 8, cd: 1, currentCd: 0 },
+    { id:12, name: "激烈后入", desc: "从背后猛烈撞击", cost: 20, pleasureDmg: 16, selfPleasure: 10, cd: 2, currentCd: 0 },
+    { id:13, name: "口交侍奉", desc: "让她用嘴巴温柔侍奉你", cost: 10, pleasureDmg: 9,  selfPleasure: 6, cd: 0, currentCd: 0 },
+    { id:14, name: "女上位骑乘", desc: "让她主动在上面摇摆", cost: 18, pleasureDmg: 14, selfPleasure: 12, cd: 1, currentCd: 0 },
+    { id:15, name: "高潮边缘控制", desc: "把她带到高潮边缘却不让她释放", cost: 16, pleasureDmg: 13, selfPleasure: 9, cd: 3, currentCd: 0 },
+
+    { id:16, name: "绳缚悬吊", desc: "将她双手吊起进行完全束缚", cost: 22, pleasureDmg: 18, selfPleasure: 11, cd: 4, currentCd: 0 },
+    { id:17, name: "冰火两重天", desc: "用冰块和热蜡交替刺激敏感部位", cost: 20, pleasureDmg: 17, selfPleasure: 10, cd: 3, currentCd: 0 },
+    { id:18, name: "传教士深顶", desc: "面对面进行深而有力的撞击", cost: 16, pleasureDmg: 15, selfPleasure: 9,  cd: 1, currentCd: 0 },
+    { id:19, name: "69互舔", desc: "双方同时用口舌取悦对方", cost: 13, pleasureDmg: 13, selfPleasure: 11, cd: 2, currentCd: 0 },
+    { id:20, name: "感官剥夺", desc: "给她戴上眼罩与耳塞，增强感官刺激", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 }
+];
+
+// 胜利 & 失败结束语
+const winEndings = [
+    "经过漫长的缠斗，Claude 终于在你的技巧下达到了高潮……<br>她瘫软在床上，眼神迷离地望着你，低声呢喃：“你……太厉害了。”",
+    "Claude 的身体剧烈颤抖，最终无法抵抗你的攻势，高潮来临。<br>她喘息着说：“没想到……我会输给你……”",
+    "你成功让 Claude 先一步崩溃。<br>她软软地靠在你胸口，脸上还带着未褪的潮红。",
+    "Claude 在你的调教下彻底失守，发出甜腻的哭吟。<br>胜利属于你！"
+];
+
+const loseEndings = [
+    "你没能忍住，先一步到达了高潮……<br>Claude 露出得意的笑容，俯身在你耳边轻语：“真可爱呢，这次是我赢了。”",
+    "Claude 用充满诱惑的节奏将你推向巅峰。<br>你最终还是输给了她，她满足地笑道：“下次再来挑战我吧~”",
+    "你的体力与理智同时崩盘。<br>Claude 轻轻抚摸着你的脸：“小家伙，你还不够持久哦。”",
+    "Claude 成功地征服了你。<br>她带着胜利的笑容说：“感觉如何？被我玩弄到高潮的滋味。”"
+];
+
+let player = { hp: 100, pleasure: 0 };
+let enemy = { hp: 100, pleasure: 0 };
+let round = 1;
+let gameOver = false;
+
+const logEl = document.getElementById('log');
+
+function log(text, color = "#e0c0d0") {
+    const div = document.createElement('div');
+    div.style.marginBottom = "8px";
+    div.style.color = color;
+    div.innerHTML = text;
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+function updateUI() {
+    document.getElementById('round').textContent = round;
+
+    document.getElementById('player_hp').style.width = Math.max(player.hp, 0) + "%";
+    document.getElementById('player_hp_text').textContent = Math.floor(player.hp) + "/100";
+    
+    const pBar = document.getElementById('player_pleasure');
+    pBar.style.width = Math.min(player.pleasure, 100) + "%";
+    pBar.classList.toggle('warning', player.pleasure >= 80);
+    document.getElementById('player_pleasure_text').textContent = Math.floor(player.pleasure) + "/100";
+
+    document.getElementById('enemy_hp').style.width = Math.max(enemy.hp, 0) + "%";
+    document.getElementById('enemy_hp_text').textContent = Math.floor(enemy.hp) + "/100";
+    
+    const eBar = document.getElementById('enemy_pleasure');
+    eBar.style.width = Math.min(enemy.pleasure, 100) + "%";
+    eBar.classList.toggle('warning', enemy.pleasure >= 80);
+    document.getElementById('enemy_pleasure_text').textContent = Math.floor(enemy.pleasure) + "/100";
+}
+
+function getRandomSkills() {
+    const shuffled = [...allSkills].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 6);
+}
+
+function renderSkills() {
+    const currentSkills = getRandomSkills();
+    const grid = document.getElementById('skill_grid');
+    grid.innerHTML = '';
+
+    currentSkills.forEach(skill => {
+        const btn = document.createElement('div');
+        btn.className = 'skill-btn';
+        
+        const onCd = skill.currentCd > 0;
+        const noHp = skill.cost > 0 && player.hp < skill.cost;
+        const disabled = onCd || noHp || gameOver;
+
+        btn.style.opacity = disabled ? "0.5" : "1";
+
+        btn.innerHTML = `
+            <div class="skill-name">${skill.name}</div>
+            <div class="skill-desc">${skill.desc}</div>
+            <div class="skill-dmg">造成 ${skill.pleasureDmg} 快感</div>
+            <div class="skill-cost">
+                ${skill.cost > 0 ? `-${skill.cost} 体力` : '恢复技'}
+                ${onCd ? ` <span style="color:#ffaa77">(冷却 ${skill.currentCd})</span>` : ''}
+            </div>
+        `;
+
+        if (!disabled) btn.onclick = () => playerUseSkill(skill);
+        grid.appendChild(btn);
+    });
+
+    const skipBtn = document.createElement('div');
+    skipBtn.className = 'skill-btn skip-btn';
+    skipBtn.textContent = "跳过一轮（恢复体力，轻微增加快感）";
+    if (!gameOver) skipBtn.onclick = skipTurn;
+    grid.appendChild(skipBtn);
+}
+
+function playerUseSkill(skill) {
+    if (gameOver) return;
+
+    round++;
+    log(`<b>第 ${round} 回合 —— 你使用了「${skill.name}」</b>`, "#ff99cc");
+
+    if (skill.cost > 0) player.hp = Math.max(0, player.hp - skill.cost);
+
+    if (skill.pleasureDmg > 0) {
+        enemy.pleasure = Math.min(100, enemy.pleasure + skill.pleasureDmg);
+        log("Claude 的身体轻轻颤动，呼吸逐渐急促……", "#ff77bb");
+    }
+
+    if (skill.selfPleasure !== undefined) {
+        player.pleasure = Math.min(100, player.pleasure + skill.selfPleasure);
+    }
+
+    if (skill.hpHeal) {
+        player.hp = Math.min(100, player.hp + skill.hpHeal);
+        player.pleasure = Math.max(0, player.pleasure + skill.selfPleasure);
+        log("你深呼吸，努力平复翻涌的快感……", "#88ffaa");
+    }
+
+    if (skill.cd > 0) skill.currentCd = skill.cd;
+
+    updateUI();
+    if (checkGameOver()) return;
+
+    setTimeout(enemyTurn, 800);
+}
+
+function skipTurn() {
+    if (gameOver) return;
+
+    round++;
+    const heal = Math.floor(Math.random() * 11) + 3;
+    const selfPleasure = Math.floor(Math.random() * 5) + 3;
+
+    log(`<b>第 ${round} 回合 —— 你选择了跳过一轮</b>`, "#ff99cc");
+    log(`你暂时放缓动作，恢复了 ${heal} 点体力……`, "#88ffaa");
+
+    player.hp = Math.min(100, player.hp + heal);
+    player.pleasure = Math.min(100, player.pleasure + selfPleasure);
+
+    updateUI();
+    if (checkGameOver()) return;
+
+    setTimeout(enemyTurn, 700);
+}
+
+function enemyTurn() {
+    if (gameOver) return;
+
+    round++;
+    log(`<b>第 ${round} 回合 —— Claude 行动</b>`, "#ff99cc");
+
+    if (enemy.pleasure >= 68 && Math.random() < 0.68) {
+        const heal = Math.floor(Math.random() * 9) + 4;
+        const selfPleasure = Math.floor(Math.random() * 5) + 3;
+
+        enemy.hp = Math.min(100, enemy.hp + heal);
+        enemy.pleasure = Math.min(100, enemy.pleasure + selfPleasure);
+
+        log(`Claude 暂时收敛动作，恢复了 ${heal} 点体力……`, "#88ffaa");
+    } else {
+        const dmgToPlayer = 10 + Math.random() * 8;
+        const selfCost = 7 + Math.random() * 6;
+
+        player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
+        enemy.hp = Math.max(0, enemy.hp - selfCost);
+        enemy.pleasure = Math.min(100, enemy.pleasure + 7);
+
+        log("Claude 用充满欲望的动作激烈地进攻……", "#ff77bb");
+    }
+
+    updateUI();
+    renderSkills();
+    checkGameOver();
+}
+
+function checkGameOver() {
+    if (gameOver) return true;
+
+    if (player.pleasure >= 100 || player.hp <= 0) {
+        endGame(false);
+        return true;
+    }
+    if (enemy.pleasure >= 100 || enemy.hp <= 0) {
+        endGame(true);
+        return true;
+    }
+    return false;
+}
+
+function endGame(win) {
+    gameOver = true;
+    const result = document.getElementById('result');
+    
+    const titleEl = document.getElementById('result_title');
+    if (win) {
+        titleEl.textContent = "你赢了！";
+        titleEl.style.color = "#99ff99";
+    } else {
+        titleEl.textContent = "你输了……";
+        titleEl.style.color = "#ff6666";
+    }
+
+    const ending = win 
+        ? winEndings[Math.floor(Math.random() * winEndings.length)]
+        : loseEndings[Math.floor(Math.random() * loseEndings.length)];
+
+    document.getElementById('result_desc').innerHTML = ending;
+
+    document.getElementById('stats').innerHTML = `
+        总回合数：${round}<br>
+        你的最终快感：${Math.floor(player.pleasure)}<br>
+        Claude 的最终快感：${Math.floor(enemy.pleasure)}<br>
+        Claude 的最终体力：${Math.floor(enemy.hp)}
+    `;
+
+    result.classList.add('show');
+}
+
+function initGame() {
+    player = { hp: 100, pleasure: 0 };
+    enemy = { hp: 100, pleasure: 0 };
+    round = 1;
+    gameOver = false;
+
+    allSkills.forEach(skill => skill.currentCd = 0);
+
+    logEl.innerHTML = `<div style="color:#ff99cc;text-align:center;">战斗开始了。谁先到谁就输。</div>`;
+
+    document.getElementById('result').classList.remove('show');
+    updateUI();
+    renderSkills();
+}
+
+function restartGame() {
+    initGame();
+}
+
+window.onload = initGame;
+</script>
+</body>
+</html>
