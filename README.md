@@ -1,7 +1,7 @@
 # ProjectSexFight
 Simple HTML game created with Grok
 
-<img width="1919" height="1079" alt="Screenshot 2026-05-01 000403" src="https://github.com/user-attachments/assets/1123afa7-62ce-4ff8-8c41-fbc5c2e9fb9f" />
+<img width="542" height="1079" alt="Screenshot 2026-05-01 000403" src="https://github.com/user-attachments/assets/51377c72-460c-4234-a8f8-e9f1f5ed3291" />
 
 [English version](./sex-fight_EN.html)
 
