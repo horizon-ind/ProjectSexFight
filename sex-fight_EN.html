@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en_GB">
+<head>
+<meta charset="UTF-8">
+<title>Sex Combat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #1a0f1f;
+        color: #e0c0d0;
+        font-family: "Microsoft YaHei", system-ui, sans-serif;
+        min-height: 100vh;
+    }
+    #game {
+        max-width: 540px;
+        margin: 0 auto;
+        padding: 10px;
+    }
+    header {
+        text-align: center;
+        padding: 12px 0;
+        font-size: 1.45em;
+        color: #ff99cc;
+        letter-spacing: 2px;
+    }
+    .card {
+        background: #2a1a2f;
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 14px;
+        border: 1px solid #664455;
+    }
+    .character {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #ff99cc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        background: #3a253f;
+    }
+    .name { font-size: 1.25em; font-weight: bold; color: #ffccdd; }
+
+    .bars { display: flex; flex-direction: column; gap: 8px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 3px; }
+    .bar {
+        height: 20px;
+        background: #1f1424;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+    .hp-bar, .pleasure-bar { 
+        height: 100%; 
+        transition: width 0.8s ease-in-out;
+    }
+    .hp-bar { background: linear-gradient(90deg, #66cc99, #33aa77); }
+    .pleasure-bar { 
+        background: linear-gradient(90deg, #ff77bb, #ff3399);
+    }
+    .pleasure-bar.warning {
+        animation: warning 1.2s infinite alternate;
+    }
+    @keyframes warning { from {filter: brightness(1);} to {filter: brightness(1.65);} }
+
+    #log {
+        background: #1f1424;
+        border: 1px solid #664455;
+        border-radius: 16px;
+        padding: 14px;
+        height: 235px;
+        overflow-y: auto;
+        margin: 15px 0;
+        line-height: 1.55;
+        font-size: 0.95em;
+        scrollbar-width: thin;
+        scrollbar-color: #ff66aa #3a253f;
+    }
+
+    /* Custom Scrollbar for WebKit browsers (Chrome, Edge, Safari) */
+    #log::-webkit-scrollbar {
+        width: 8px;
+    }
+    #log::-webkit-scrollbar-track {
+        background: #2a1a2f;
+        border-radius: 10px;
+    }
+    #log::-webkit-scrollbar-thumb {
+        background: linear-gradient(#ff66aa, #cc3388);
+        border-radius: 10px;
+        border: 1px solid #ff99cc;
+    }
+    #log::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(#ff99cc, #ff3399);
+    }
+
+    .skills-title {
+        text-align: center;
+        margin: 12px 0 8px;
+        color: #ff99cc;
+        font-size: 1.15em;
+    }
+    .skills {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .skill-btn {
+        background: #3a253f;
+        border: 2px solid #885577;
+        border-radius: 14px;
+        padding: 12px 10px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .skill-btn:hover:not(:disabled) {
+        background: #552b5c;
+        border-color: #ff99cc;
+        transform: translateY(-3px);
+    }
+    .skill-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+    .skill-name { font-weight: bold; font-size: 1.05em; }
+    .skill-desc { font-size: 0.84em; opacity: 0.85; margin: 4px 0 4px; }
+    .skill-dmg { font-size: 0.82em; color: #ff99cc; margin-top: 2px; }
+    .skill-cost { font-size: 0.85em; color: #ffbb99; }
+
+    .skip-btn {
+        grid-column: 1 / -1;
+        background: #442233;
+        border: 2px solid #aa6688;
+        color: #ffccdd;
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 1.05em;
+        margin-top: 8px;
+        cursor: pointer;
+    }
+    .skip-btn:hover:not(:disabled) {
+        background: #663344;
+        border-color: #ff99cc;
+    }
+
+    #result {
+        position: fixed; inset: 0;
+        background: rgba(15,5,20,0.98);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        padding: 20px;
+        text-align: center;
+        animation: fadeIn 0.6s ease forwards;
+    }
+    #result.show { display: flex; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.85); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .result-title {
+        font-size: 2.2em;
+        margin: 10px 0 15px;
+        text-shadow: 0 0 15px currentColor;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+</style>
+</head>
+<body>
+
+<div id="game">
+    <header>ROUND <span id="round">1</span></header>
+
+    <div class="card">
+        <div class="character">
+            <div class="avatar">🦊</div>
+            <div><div class="name">You</div><div style="font-size:0.85em;opacity:0.8;">Lustful hunter</div></div>
+        </div>
+        <div class="bars">
+            <div>
+                <div class="bar-label">Stamina <span id="player_hp_text">100/100</span></div>
+                <div class="bar"><div id="player_hp" class="hp-bar" style="width:100%"></div></div>
+            </div>
+            <div>
+                <div class="bar-label">Pleasure <span id="player_pleasure_text">0/100</span></div>
+                <div class="bar"><div id="player_pleasure" class="pleasure-bar" style="width:0%"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="character">
+            <div class="avatar">✨</div>
+            <div><div class="name">Claude</div><div style="font-size:0.85em;opacity:0.8;">Sexy and seductive opponent</div></div>
+        </div>
+        <div class="bars">
+            <div>
+                <div class="bar-label">Stamina <span id="enemy_hp_text">100/100</span></div>
+                <div class="bar"><div id="enemy_hp" class="hp-bar" style="width:100%"></div></div>
+            </div>
+            <div>
+                <div class="bar-label">Pleasure <span id="enemy_pleasure_text">0/100</span></div>
+                <div class="bar"><div id="enemy_pleasure" class="pleasure-bar" style="width:0%"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="log"></div>
+
+    <div class="skills-title">- Choose your move -</div>
+    <div class="skills" id="skill_grid"></div>
+</div>
+
+<div id="result">
+    <h2 id="result_title" class="result-title"></h2>
+    <p id="result_desc" style="max-width:460px; line-height:1.7; margin:15px 0;"></p>
+    <p id="stats"></p>
+    <button onclick="restartGame()" style="margin-top:25px; padding:15px 55px; font-size:1.1em; background:#552b5c; border:none; border-radius:14px; color:white;">
+        Another round!
+    </button>
+</div>
+
+<script>
+// ====================== 20 abilities ======================
+const allSkills = [
+    { id:1,  name: "Rope bondage", desc: "Tie her hands to the bed with ropes.", cost: 12, pleasureDmg: 10, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:2,  name: "Hot wax play", desc: "Drip hot wax onto her sensitive areas.", cost: 18, pleasureDmg: 13, selfPleasure: 6, cd: 3, currentCd: 0 },
+    { id:3,  name: "Whip teasing", desc: "Whip her breasts and thighs with a leather whip.", cost: 15, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:4,  name: "Light choking", desc: "Choke her neck and feel her tremble.", cost: 20, pleasureDmg: 14, selfPleasure: 8, cd: 3, currentCd: 0 },
+    { id:5,  name: "Gag training", desc: "Stuff her mouth and only let her make muffled moans.", cost: 14, pleasureDmg: 10, selfPleasure: 4, cd: 2, currentCd: 0 },
+    { id:6,  name: "Nipple clamp torture", desc: "Put nipple clamps on her and gently tug them.", cost: 16, pleasureDmg: 12, selfPleasure: 6, cd: 2, currentCd: 0 },
+    { id:7,  name: "Deepthroat", desc: "Grab her hair and force her into deepthroat.", cost: 22, pleasureDmg: 15, selfPleasure: 9, cd: 3, currentCd: 0 },
+     { id:8, name: "Mounted restraint", desc: "Forcefully mount her and thrust intensely.", cost: 25, pleasureDmg: 17, selfPleasure: 11, cd: 0, currentCd: 0 },
+    { id:9,  name: "BDSM Training", desc: "Ultimate ability - Multiple stimulations at the same time.", cost: 35, pleasureDmg: 26, selfPleasure: 14, cd: 6, currentCd: 0 },
+    { id:10, name: "Take a breath", desc: "Take deep breaths to recover stamina and calm down.", cost: 0, pleasureDmg: 0, selfPleasure: -18, hpHeal: 18, cd: 5, currentCd: 0 },
+
+    { id:11, name: "Slow Thrusting", desc: "Thrust her slowly and deeply.", cost: 14, pleasureDmg: 12, selfPleasure: 8, cd: 1, currentCd: 0 },
+    { id:12, name: "Doggystyle", desc: "Pound her fiercely from behind.", cost: 20, pleasureDmg: 16, selfPleasure: 10, cd: 2, currentCd: 0 },
+    { id:13, name: "Oral service", desc: "Let her gently serve you with her mouth.", cost: 10, pleasureDmg: 9,  selfPleasure: 6, cd: 0, currentCd: 0 },
+    { id:14, name: "Cowgirl riding", desc: "Let her take the initiative and ride on top.", cost: 18, pleasureDmg: 14, selfPleasure: 12, cd: 1, currentCd: 0 },
+    { id:15, name: "Edging control", desc: "Bring her to the edge of orgasm but don't let her cum.", cost: 16, pleasureDmg: 13, selfPleasure: 9, cd: 3, currentCd: 0 },
+
+    { id:16, name: "Suspension bondage", desc: "Suspend Claude above for complete restraint.", cost: 22, pleasureDmg: 18, selfPleasure: 11, cd: 4, currentCd: 0 },
+    { id:17, name: "Ice and Fire", desc: "Alternate between ice and hot wax on her sensitive spots", cost: 20, pleasureDmg: 17, selfPleasure: 10, cd: 3, currentCd: 0 },
+    { id:18, name: "Missionary", desc: "Face-to-face deep and powerful pounding.", cost: 16, pleasureDmg: 15, selfPleasure: 9,  cd: 1, currentCd: 0 },
+    { id:19, name: "69 Oral", desc: "Both pleasure each other with mouths and tongues simultaneously.", cost: 13, pleasureDmg: 13, selfPleasure: 11, cd: 2, currentCd: 0 },
+    { id:20, name: "Sensory deprivation", desc: "Put a blindfold and earplugs on her to heighten sensory stimulation.", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 }
+];
+// Concluding remarks for victory and defeat
+const winEndings = [
+    "After a long struggle, Claude finally reaches climax under your techniques…<br>She collapses onto the bed, gazing at you with dazed eyes, whispering softly,“You… are amazing.”",
+    "Claude's body trembles intensely, and in the end she cannot withstand your advances as climax takes over.<br>She pants and says, “I didn't expect… I would lose to you…”",
+    "You successfully make Claude break down first.<br>She leans weakly against your chest, her face still flushed.",
+    "Claude completely loses control under your training, letting out soft, sweet cries.<br>Victory is yours!"
+];
+
+const loseEndings = [
+    "You couldn't hold back and reached climax first…<br>Claude shows a smug smile and leans close to whisper in your ear, “How cute, this time I win.”",
+    "Claude pushes you to the peak with a seductive rhythm.<br>In the end, you lose to her, and she smiles in satisfaction, “Come challenge me again next time~”",
+    "Your stamina and composure both collapse.<br>Claude gently strokes your face, “Little one, you're not enduring enough yet.”",
+    "Claude successfully conquers you.<br>With a victorious smile, she says, “How does it feel, being played to climax by me?”"
+];
+
+let player = { hp: 100, pleasure: 0 };
+let enemy = { hp: 100, pleasure: 0 };
+let round = 1;
+let gameOver = false;
+
+const logEl = document.getElementById('log');
+
+function log(text, color = "#e0c0d0") {
+    const div = document.createElement('div');
+    div.style.marginBottom = "8px";
+    div.style.color = color;
+    div.innerHTML = text;
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+function updateUI() {
+    document.getElementById('round').textContent = round;
+
+    document.getElementById('player_hp').style.width = Math.max(player.hp, 0) + "%";
+    document.getElementById('player_hp_text').textContent = Math.floor(player.hp) + "/100";
+    
+    const pBar = document.getElementById('player_pleasure');
+    pBar.style.width = Math.min(player.pleasure, 100) + "%";
+    pBar.classList.toggle('warning', player.pleasure >= 80);
+    document.getElementById('player_pleasure_text').textContent = Math.floor(player.pleasure) + "/100";
+
+    document.getElementById('enemy_hp').style.width = Math.max(enemy.hp, 0) + "%";
+    document.getElementById('enemy_hp_text').textContent = Math.floor(enemy.hp) + "/100";
+    
+    const eBar = document.getElementById('enemy_pleasure');
+    eBar.style.width = Math.min(enemy.pleasure, 100) + "%";
+    eBar.classList.toggle('warning', enemy.pleasure >= 80);
+    document.getElementById('enemy_pleasure_text').textContent = Math.floor(enemy.pleasure) + "/100";
+}
+
+function getRandomSkills() {
+    const shuffled = [...allSkills].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 6);
+}
+
+function renderSkills() {
+    const currentSkills = getRandomSkills();
+    const grid = document.getElementById('skill_grid');
+    grid.innerHTML = '';
+
+    currentSkills.forEach(skill => {
+        const btn = document.createElement('div');
+        btn.className = 'skill-btn';
+        
+        const onCd = skill.currentCd > 0;
+        const noHp = skill.cost > 0 && player.hp < skill.cost;
+        const disabled = onCd || noHp || gameOver;
+
+        btn.style.opacity = disabled ? "0.5" : "1";
+
+        btn.innerHTML = `
+            <div class="skill-name">${skill.name}</div>
+            <div class="skill-desc">${skill.desc}</div>
+            <div class="skill-dmg">+${skill.pleasureDmg} Pleasure</div>
+            <div class="skill-cost">
+                ${skill.cost > 0 ? `-${skill.cost} Stamina` : 'Recovers 5-15 stamina'}
+                ${onCd ? ` <span style="color:#ffaa77">( On Cooldown ${skill.currentCd})</span>` : ''}
+            </div>
+        `;
+
+        if (!disabled) btn.onclick = () => playerUseSkill(skill);
+        grid.appendChild(btn);
+    });
+
+    const skipBtn = document.createElement('div');
+    skipBtn.className = 'skill-btn skip-btn';
+    skipBtn.textContent = "Skip this round (Recovers stamina, slightly increase pleasure)";
+    if (!gameOver) skipBtn.onclick = skipTurn;
+    grid.appendChild(skipBtn);
+}
+
+function playerUseSkill(skill) {
+    if (gameOver) return;
+
+    round++;
+    log(`<b>Round ${round} —— You used "${skill.name}"</b>`, "#ff99cc");
+
+    if (skill.cost > 0) player.hp = Math.max(0, player.hp - skill.cost);
+
+    if (skill.pleasureDmg > 0) {
+        enemy.pleasure = Math.min(100, enemy.pleasure + skill.pleasureDmg);
+        log("Claude's body trembled slightly, and his breathing gradually became rapid...", "#ff77bb");
+    }
+
+    if (skill.selfPleasure !== undefined) {
+        player.pleasure = Math.min(100, player.pleasure + skill.selfPleasure);
+    }
+
+    if (skill.hpHeal) {
+        player.hp = Math.min(100, player.hp + skill.hpHeal);
+        player.pleasure = Math.max(0, player.pleasure + skill.selfPleasure);
+        log("You took a deep breath, trying to calm the surging pleasure...", "#88ffaa");
+    }
+
+    if (skill.cd > 0) skill.currentCd = skill.cd;
+
+    updateUI();
+    if (checkGameOver()) return;
+
+    setTimeout(enemyTurn, 800);
+}
+
+function skipTurn() {
+    if (gameOver) return;
+
+    round++;
+    const heal = Math.floor(Math.random() * 11) + 3;
+    const selfPleasure = Math.floor(Math.random() * 5) + 3;
+
+    log(`<b>Round ${round} —— You chose to skip this round.</b>`, "#ff99cc");
+    log(`You stopped for a bit, and recovered ${heal} Stamina...`, "#88ffaa");
+
+    player.hp = Math.min(100, player.hp + heal);
+    player.pleasure = Math.min(100, player.pleasure + selfPleasure);
+
+    updateUI();
+    if (checkGameOver()) return;
+
+    setTimeout(enemyTurn, 700);
+}
+
+function enemyTurn() {
+    if (gameOver) return;
+
+    round++;
+    log(`<b>Round ${round} —— Claude acts..</b>`, "#ff99cc");
+
+    if (enemy.pleasure >= 68 && Math.random() < 0.68) {
+        const heal = Math.floor(Math.random() * 9) + 4;
+        const selfPleasure = Math.floor(Math.random() * 5) + 3;
+
+        enemy.hp = Math.min(100, enemy.hp + heal);
+        enemy.pleasure = Math.min(100, enemy.pleasure + selfPleasure);
+
+        log(`Claude stopped for a bit, and recovered ${heal} Stamina...`, "#88ffaa");
+    } else {
+        const dmgToPlayer = 10 + Math.random() * 8;
+        const selfCost = 7 + Math.random() * 6;
+
+        player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
+        enemy.hp = Math.max(0, enemy.hp - selfCost);
+        enemy.pleasure = Math.min(100, enemy.pleasure + 7);
+
+        log("Claude attacked fiercely with actions full of desire...", "#ff77bb");
+    }
+
+    updateUI();
+    renderSkills();
+    checkGameOver();
+}
+
+function checkGameOver() {
+    if (gameOver) return true;
+
+    if (player.pleasure >= 100 || player.hp <= 0) {
+        endGame(false);
+        return true;
+    }
+    if (enemy.pleasure >= 100 || enemy.hp <= 0) {
+        endGame(true);
+        return true;
+    }
+    return false;
+}
+
+function endGame(win) {
+    gameOver = true;
+    const result = document.getElementById('result');
+    
+    const titleEl = document.getElementById('result_title');
+    if (win) {
+        titleEl.textContent = "You won!";
+        titleEl.style.color = "#99ff99";
+    } else {
+        titleEl.textContent = "You lost...";
+        titleEl.style.color = "#ff6666";
+    }
+
+    const ending = win 
+        ? winEndings[Math.floor(Math.random() * winEndings.length)]
+        : loseEndings[Math.floor(Math.random() * loseEndings.length)];
+
+    document.getElementById('result_desc').innerHTML = ending;
+
+    document.getElementById('stats').innerHTML = `
+        Number or rounds: ${round}<br>
+        Your final Pleasure: ${Math.floor(player.pleasure)}<br>
+        Claude's final Pleasure: ${Math.floor(enemy.pleasure)}<br>
+        Claude's Final strength: ${Math.floor(enemy.hp)}
+    `;
+
+    result.classList.add('show');
+}
+
+function initGame() {
+    player = { hp: 100, pleasure: 0 };
+    enemy = { hp: 100, pleasure: 0 };
+    round = 1;
+    gameOver = false;
+
+    allSkills.forEach(skill => skill.currentCd = 0);
+
+    logEl.innerHTML = `<div style="color:#ff99cc;text-align:center;">The battle have started. Whoever orgasm first loses.</div>`;
+
+    document.getElementById('result').classList.remove('show');
+    updateUI();
+    renderSkills();
+}
+
+function restartGame() {
+    initGame();
+}
+
+window.onload = initGame;
+</script>
+</body>
+</html>
