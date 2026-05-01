@@ -1,7 +1,7 @@
 # ProjectSexFight
 Simple HTML game created with Grok and Claude (Sonnet 4.6).
 
-<img width="542" height="1079" alt="Screenshot 2026-05-01 000403" src="https://github.com/user-attachments/assets/51377c72-460c-4234-a8f8-e9f1f5ed3291" />
+<img width="959" height="2497" alt="image" src="https://github.com/user-attachments/assets/d28a68e6-abea-4701-b774-5a4529ba67d6" />
 
 [English version](https://horizon-ind.github.io/ProjectSexFight/sex-fight_EN)
 
