@@ -273,17 +273,17 @@ const allSkills = [
 ];
 // Concluding remarks for victory and defeat
 const winEndings = [
-    "After a long struggle, Claude finally reaches climax under your techniques…<br>She collapses onto the bed, gazing at you with dazed eyes, whispering softly,“You… are amazing.”",
-    "Claude's body trembles intensely, and in the end she cannot withstand your advances as climax takes over.<br>She pants and says, “I didn't expect… I would lose to you…”",
-    "You successfully make Claude break down first.<br>She leans weakly against your chest, her face still flushed.",
-    "Claude completely loses control under your training, letting out soft, sweet cries.<br>Victory is yours!"
+    "Claude's breath finally gives out in one long, shuddering release. She sinks into the sheets, cheeks flushed, and looks up at you with dazed, half-lidded eyes. ‘You… something else,’ she murmurs, barely above a whisper.",
+    "She trembles through the last wave and goes still, chest rising and falling in slow, unsteady rhythms. After a long silence, she turns her head toward you. ‘I didn't think you'd actually win,’ she admits softly.",
+    "Claude strains one final time against her restraints — then collapses, undone. She exhales shakily, eyes wet at the corners. ‘You broke me,’ she breathes, somewhere between surrender and awe.",
+    "Her body arches one last time before she goes completely limp, every defense stripped away. She gazes up at you from beneath the blindfold, voice small and breathless. ‘I'm yours. You win.’"
 ];
 
 const loseEndings = [
-    "You couldn't hold back and reached climax first…<br>Claude shows a smug smile and leans close to whisper in your ear, “How cute, this time I win.”",
-    "Claude pushes you to the peak with a seductive rhythm.<br>In the end, you lose to her, and she smiles in satisfaction, “Come challenge me again next time~”",
-    "Your stamina and composure both collapse.<br>Claude gently strokes your face, “Little one, you're not enduring enough yet.”",
-    "Claude successfully conquers you.<br>With a victorious smile, she says, “How does it feel, being played to climax by me?”"
+    "The pleasure crests before you can stop it, and you collapse forward with a ragged exhale. Claude catches you with a soft laugh. ‘Shh,’ she murmurs, stroking your hair. ‘You did so well. Just not well enough.’",
+    "Your vision blurs and your body gives in all at once. Claude tilts her head, watching you come undone with quiet satisfaction. ‘You were so close,’ she says gently. ‘Come back and try again.’",
+    "You pull against every restraint you have — but your body won't listen anymore. Claude leans down close, her lips brushing your ear. ‘The harder you fight it,’ she whispers, ‘the faster it takes you.’",
+    "She holds you right at the edge until you break, and there's nothing left to do but give in. Claude smooths a hand down your chest, eyes gleaming. ‘That's it,’ she says softly. ‘Let go. You were never going to win this one.’"
 ];
 
 let player = { hp: 100, pleasure: 0 };
@@ -401,7 +401,15 @@ function playerUseSkill(skill) {
 
     if (skill.pleasureDmg > 0) {
         enemy.pleasure = Math.min(100, enemy.pleasure + skill.pleasureDmg);
-        log("Claude's body trembled slightly, and his breathing gradually became rapid...", "#ff77bb");
+        const playerAttackLogs = [
+            "Claude's body trembled slightly, and his breathing gradually became rapid...",
+            "She strains against her restraints, a desperate moan slipping out as your dominance tightens around her.",
+            "A shiver runs through her whole body — her composure cracking just a little more.",
+            "Her body betrays her completely — trembling, helpless, and entirely at your mercy.",
+            "Her breath hitches sharply, fingers curling into the sheets beneath her.",
+            "She lets out a trembling exhale, eyes glazing over as the sensation washes through her.",
+        ];
+        log(playerAttackLogs[Math.floor(Math.random() * playerAttackLogs.length)], "#ff77bb");
     }
 
     if (skill.hpHeal) {
@@ -466,7 +474,15 @@ function enemyTurn() {
         enemy.hp = Math.max(0, enemy.hp - selfCost);
         enemy.pleasure = Math.min(100, enemy.pleasure + 7);
 
-        log("Claude attacked fiercely with actions full of desire...", "#ff77bb");
+        const claudeAttackLogs = [
+            "Claude slips free of your grip just enough to flip the dynamic, reminding you that control can be stolen in an instant.",
+            "Claude leans in close, her breath warm against your skin as she makes her move.",
+            "She exploits a moment of weakness and takes hold, making you feel what it's like to be on the other end.",
+            "She meets your gaze with a slow smile, then strikes with practiced, ruthless precision.",
+            "Claude shifts beneath you and turns the tables, drawing a sharp intake of breath from you.",
+            "She whispers something low in your ear before making you feel every word of it.",
+        ];
+        log(claudeAttackLogs[Math.floor(Math.random() * claudeAttackLogs.length)], "#ff77bb");
     }
 
     updateUI();
