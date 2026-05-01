@@ -285,6 +285,7 @@ let player = { hp: 100, pleasure: 0 };
 let enemy = { hp: 100, pleasure: 0 };
 let round = 1;
 let gameOver = false;
+let activeSkills = [];
 
 const logEl = document.getElementById('log');
 
@@ -323,30 +324,26 @@ function getRandomSkills() {
 }
 
 function renderSkills() {
-    const currentSkills = getRandomSkills();
     const grid = document.getElementById('skill_grid');
     grid.innerHTML = '';
 
-    currentSkills.forEach(skill => {
+    const onCdSkills = allSkills.filter(s => s.currentCd > 0);
+    const available = allSkills.filter(s => s.currentCd === 0);
+    const shuffled = [...available].sort(() => 0.5 - Math.random()).slice(0, 6);
+
+    // Render the 6 available (rotating) skills
+    shuffled.forEach(skill => {
         const btn = document.createElement('div');
         btn.className = 'skill-btn';
-        
-        const onCd = skill.currentCd > 0;
         const noHp = skill.cost > 0 && player.hp < skill.cost;
-        const disabled = onCd || noHp || gameOver;
-
+        const disabled = noHp || gameOver;
         btn.style.opacity = disabled ? "0.5" : "1";
-
         btn.innerHTML = `
             <div class="skill-name">${skill.name}</div>
             <div class="skill-desc">${skill.desc}</div>
             <div class="skill-dmg">造成 ${skill.pleasureDmg} 快感</div>
-            <div class="skill-cost">
-                ${skill.cost > 0 ? `-${skill.cost} 体力` : '恢复技'}
-                ${onCd ? ` <span style="color:#ffaa77">(冷却 ${skill.currentCd})</span>` : ''}
-            </div>
+            <div class="skill-cost">${skill.cost > 0 ? `-${skill.cost} 体力` : '恢复技'}</div>
         `;
-
         if (!disabled) btn.onclick = () => playerUseSkill(skill);
         grid.appendChild(btn);
     });
@@ -356,6 +353,29 @@ function renderSkills() {
     skipBtn.textContent = "跳过一轮（恢复体力，轻微增加快感）";
     if (!gameOver) skipBtn.onclick = skipTurn;
     grid.appendChild(skipBtn);
+
+    // Render CD skills below as a locked row (if any)
+    if (onCdSkills.length > 0) {
+        const cdLabel = document.createElement('div');
+        cdLabel.style.cssText = 'grid-column:1/-1; font-size:0.82em; color:#ffaa77; margin-top:6px; text-align:center; opacity:0.8;';
+        cdLabel.textContent = '— 冷却中 —';
+        grid.appendChild(cdLabel);
+
+        onCdSkills.forEach(skill => {
+            const btn = document.createElement('div');
+            btn.className = 'skill-btn';
+            btn.style.opacity = "0.45";
+            btn.style.filter = "grayscale(0.7)";
+            btn.style.cursor = "not-allowed";
+            btn.innerHTML = `
+                <div class="skill-name">${skill.name}</div>
+                <div class="skill-desc">${skill.desc}</div>
+                <div class="skill-dmg">造成 ${skill.pleasureDmg} 快感</div>
+                <div class="skill-cost">-${skill.cost} 体力 <span style="color:#ffaa77">(冷却剩余：${skill.currentCd})</span></div>
+            `;
+            grid.appendChild(btn);
+        });
+    }
 }
 
 function setInputDisabled(disabled) {
@@ -446,6 +466,7 @@ function enemyTurn() {
     }
 
     updateUI();
+    allSkills.forEach(s => { if (s.currentCd > 0) s.currentCd--; });
     renderSkills();
     if (!checkGameOver()) {
         setInputDisabled(false);
@@ -502,6 +523,7 @@ function initGame() {
     gameOver = false;
 
     allSkills.forEach(skill => skill.currentCd = 0);
+    activeSkills = [...allSkills].sort(() => 0.5 - Math.random()).slice(0, 6);
 
     logEl.innerHTML = `<div style="color:#ff99cc;text-align:center;">战斗开始了。谁先到谁就输。</div>`;
 
