@@ -490,21 +490,47 @@ function enemyTurn() {
     round++;
     log(`<b>Round ${round} —— Claude acts..</b>`, "#ff99cc");
 
-    if (enemy.pleasure >= 68 && Math.random() < 0.68) {
-        const heal = Math.floor(Math.random() * 9) + 4;
-        const selfPleasure = Math.floor(Math.random() * 5) + 3;
+    const playerDanger = player.pleasure >= 85;   // player close to losing
+    const enemyDanger  = enemy.pleasure >= 75;     // claude close to losing
+    const enemyLowHp   = enemy.hp <= 30;
+    const enemyCritical = enemy.pleasure >= 90;    // claude almost at limit
+
+    // Decide whether to heal or attack
+    // Claude heals if: her pleasure is high, she's not about to lose herself,
+    // player isn't on the verge of losing (no need to heal if one hit wins),
+    // and the heal would actually reduce her pleasure meaningfully
+    const shouldHeal = enemyDanger
+        && !enemyCritical        // never heal at 90+, too risky
+        && !playerDanger         // don't waste a turn healing if player is about to lose
+        && Math.random() < 0.72; // base probability
+
+    if (shouldHeal) {
+        // Heal amount scales with how desperate she is
+        const healBonus = enemy.pleasure >= 85 ? 4 : 0;
+        const heal = Math.floor(Math.random() * 8) + 5 + healBonus;
+        const pleasureDrop = Math.floor(Math.random() * 6) + 6 + healBonus;
 
         enemy.hp = Math.min(100, enemy.hp + heal);
-        enemy.pleasure = Math.min(100, enemy.pleasure + selfPleasure);
+        enemy.pleasure = Math.max(0, enemy.pleasure - pleasureDrop);
 
-        log(`Claude stopped for a bit, and recovered ${heal} Stamina...`, "#88ffaa");
+        log(`Claude paused to collect herself, recovering ${heal} Stamina...`, "#88ffaa");
     } else {
-        const dmgToPlayer = 10 + Math.random() * 8;
-        const selfCost = 7 + Math.random() * 6;
+        // Attack — damage scales with player's pleasure (goes for the kill)
+        const pressureBonus = player.pleasure >= 70 ? 4 : player.pleasure >= 50 ? 2 : 0;
+        const desperationBonus = enemyLowHp ? 3 : 0;  // reckless when low HP
+        const dmgToPlayer = 10 + Math.random() * 8 + pressureBonus + desperationBonus;
+
+        // Self-cost is lower when she's already in danger (self-preservation)
+        const selfCost = enemyDanger
+            ? 3 + Math.random() * 3
+            : 5 + Math.random() * 5;
+
+        // Self-pleasure on attack — increases slightly when she's desperate
+        const selfPleasureGain = enemyCritical ? 3 : 5 + Math.random() * 3;
 
         player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
         enemy.hp = Math.max(0, enemy.hp - selfCost);
-        enemy.pleasure = Math.min(100, enemy.pleasure + 7);
+        enemy.pleasure = Math.min(100, enemy.pleasure + selfPleasureGain);
 
         const claudeAttackLogs = [
             "Claude slips free of your grip just enough to flip the dynamic, reminding you that control can be stolen in an instant.",
