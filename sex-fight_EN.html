@@ -323,9 +323,38 @@ function updateUI() {
     document.getElementById('enemy_pleasure_text').textContent = Math.floor(enemy.pleasure) + "/100";
 }
 
-function getRandomSkills() {
-    const shuffled = [...allSkills].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 6);
+let lastRoundSkillIds = new Set();
+
+function weightedSkillDraw(pool, count) {
+    // Skills shown last round get weight 1, fresh skills get weight 5
+    const weighted = [];
+    pool.forEach(s => {
+        const w = lastRoundSkillIds.has(s.id) ? 1 : 5;
+        for (let i = 0; i < w; i++) weighted.push(s);
+    });
+
+    const picked = [];
+    const pickedIds = new Set();
+    const attempts = weighted.length * 3;
+    let i = 0;
+    while (picked.length < count && i < attempts) {
+        const candidate = weighted[Math.floor(Math.random() * weighted.length)];
+        if (!pickedIds.has(candidate.id)) {
+            picked.push(candidate);
+            pickedIds.add(candidate.id);
+        }
+        i++;
+    }
+    // Fallback: fill remaining slots from pool in case weighted draw fell short
+    if (picked.length < count) {
+        pool.forEach(s => {
+            if (!pickedIds.has(s.id) && picked.length < count) {
+                picked.push(s);
+                pickedIds.add(s.id);
+            }
+        });
+    }
+    return picked;
 }
 
 function renderSkills() {
@@ -334,10 +363,13 @@ function renderSkills() {
 
     const onCdSkills = allSkills.filter(s => s.currentCd > 0);
     const available = allSkills.filter(s => s.currentCd === 0);
-    const shuffled = [...available].sort(() => 0.5 - Math.random()).slice(0, 6);
+    const pool = weightedSkillDraw(available, 6);
+    
+    // Track which skills were shown this round
+    lastRoundSkillIds = new Set(pool.map(s => s.id));
 
     // Render the 6 available (rotating) skills
-    shuffled.forEach(skill => {
+    pool.forEach(skill => {
         const btn = document.createElement('div');
         btn.className = 'skill-btn';
         const noHp = skill.cost > 0 && player.hp < skill.cost;
@@ -527,7 +559,7 @@ function endGame(win) {
     document.getElementById('result_desc').innerHTML = ending;
 
     document.getElementById('stats').innerHTML = `
-        Number of rounds: ${round}<br>
+        Number or rounds: ${round}<br>
         Your final Pleasure: ${Math.floor(player.pleasure)}<br>
         Claude's final Pleasure: ${Math.floor(enemy.pleasure)}<br>
         Claude's Final strength: ${Math.floor(enemy.hp)}
@@ -544,6 +576,7 @@ function initGame() {
 
     allSkills.forEach(skill => skill.currentCd = 0);
     activeSkills = [...allSkills].sort(() => 0.5 - Math.random()).slice(0, 6);
+     lastRoundSkillIds = new Set();
 
     logEl.innerHTML = `<div style="color:#ff99cc;text-align:center;">The battle have started. Whoever orgasm first loses.</div>`;
 
