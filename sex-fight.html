@@ -242,34 +242,34 @@
 <script>
 // ====================== 20 个技能 ======================
 const allSkills = [
-    { id:1,  name: "绳索束缚", desc: "用粗绳将她的双腕紧绑在床头，让她无力抗拒你的每一次触碰。", cost: 12, pleasureDmg: 10, selfPleasure: 5, cd: 2, currentCd: 0 },
-    { id:2,  name: "热蜡滴身", desc: "缓缓将蜡烛倾斜于她裸露的肌肤之上，每一滴灼热的蜡液都能从她唇间逼出一声轻呼。", cost: 18, pleasureDmg: 13, selfPleasure: 6, cd: 3, currentCd: 0 },
-    { id:3,  name: "皮鞭抽打", desc: "将皮鞭甩落在她的胸部与大腿，每一击都在她皮肤上留下一道隐隐发烫的红痕。", cost: 15, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
-    { id:4,  name: "窒息轻掐", desc: "将手掌环扣于她的颈间轻轻施压，感受她在你掌心下急促跳动的脉搏。", cost: 20, pleasureDmg: 14, selfPleasure: 8, cd: 3, currentCd: 0 },
-    { id:5,  name: "口塞调教", desc: "将口塞抵入她的唇间并固定好，让她所有的反抗都化为绝望而压抑的呜咽。", cost: 14, pleasureDmg: 10, selfPleasure: 4, cd: 2, currentCd: 0 },
-    { id:6,  name: "乳夹折磨", desc: "将乳夹夹紧她的双乳，缓缓而刻意地拉动链条，静静欣赏她在刺激下扭动的模样。", cost: 16, pleasureDmg: 12, selfPleasure: 6, cd: 2, currentCd: 0 },
-    { id:7,  name: "深喉支配", desc: "将手指缠入她的发间，坚定地将她的头向下压，让她别无选择地全盘承受。", cost: 22, pleasureDmg: 15, selfPleasure: 9, cd: 3, currentCd: 0 },
-    { id:8,  name: "骑乘压制", desc: "将她压制在身下，以势不可挡的力道深入，每一次撞击都夺走她肺中残余的气息。", cost: 25, pleasureDmg: 17, selfPleasure: 11, cd: 0, currentCd: 0 },
-    { id:9,  name: "女王调教", desc: "同时释放一切——束缚、刺激与支配，将她的感官推向远超极限的境地。", cost: 35, pleasureDmg: 26, selfPleasure: 14, cd: 6, currentCd: 0 },
-    { id:10, name: "冷静调息", desc: "暂时退出缠斗，深深吸一口气，让积聚的紧绷从身体中缓缓消散，重拾镇定。", cost: 0, pleasureDmg: 0, selfPleasure: -18, hpHeal: 18, cd: 5, currentCd: 0 },
+    { id:1,  name: "绳索束缚", desc: "用粗绳将她的双腕紧绑在床头，让她无力抗拒你的每一次触碰。", cost: 11, pleasureDmg: 12, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:2,  name: "热蜡滴身", desc: "缓缓将蜡烛倾斜于她裸露的肌肤之上，每一滴灼热的蜡液都能从她唇间逼出一声轻呼。", cost: 16, pleasureDmg: 15, selfPleasure: 6, cd: 3, currentCd: 0 },
+    { id:3,  name: "皮鞭抽打", desc: "将皮鞭甩落在她的胸部与大腿，每一击都在她皮肤上留下一道隐隐发烫的红痕。", cost: 13, pleasureDmg: 13, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:4,  name: "窒息轻掐", desc: "将手掌环扣于她的颈间轻轻施压，感受她在你掌心下急促跳动的脉搏。", cost: 18, pleasureDmg: 16, selfPleasure: 8, cd: 3, currentCd: 0 },
+    { id:5,  name: "口塞调教", desc: "将口塞抵入她的唇间并固定好，让她所有的反抗都化为绝望而压抑的呜咽。", cost: 12, pleasureDmg: 12, selfPleasure: 4, cd: 2, currentCd: 0 },
+    { id:6,  name: "乳夹折磨", desc: "将乳夹夹紧她的双乳，缓缓而刻意地拉动链条，静静欣赏她在刺激下扭动的模样。", cost: 14, pleasureDmg: 14, selfPleasure: 6, cd: 2, currentCd: 0 },
+    { id:7,  name: "深喉支配", desc: "将手指缠入她的发间，坚定地将她的头向下压，让她别无选择地全盘承受。", cost: 20, pleasureDmg: 17, selfPleasure: 9, cd: 3, currentCd: 0 },
+    { id:8,  name: "骑乘压制", desc: "将她压制在身下，以势不可挡的力道深入，每一次撞击都夺走她肺中残余的气息。", cost: 23, pleasureDmg: 19, selfPleasure: 11, cd: 0, currentCd: 0 },
+    { id:9,  name: "女王调教", desc: "同时释放一切——束缚、刺激与支配，将她的感官推向远超极限的境地。", cost: 32, pleasureDmg: 29, selfPleasure: 14, cd: 6, currentCd: 0 },
+    { id:10, name: "冷静调息", desc: "暂时退出缠斗，深深吸一口气，让积聚的紧绷从身体中缓缓消散，重拾镇定。", cost: 0, pleasureDmg: 0, selfPleasure: -16, hpHeal: 16, cd: 5, currentCd: 0 },
 
-    { id:11, name: "缓慢抽插", desc: "以缓慢而刻意的节奏律动腰胯，每一次深入都经过精心设计，让她一点一点地崩溃瓦解。", cost: 14, pleasureDmg: 12, selfPleasure: 8, cd: 1, currentCd: 0 },
-    { id:12, name: "激烈后入", desc: "双手扣住她的腰臀猛地向后拽入，从背后以原始而不加收敛的力道猛烈撞击。", cost: 20, pleasureDmg: 16, selfPleasure: 10, cd: 2, currentCd: 0 },
-    { id:13, name: "口交侍奉", desc: "将她的头向下压至你的腿间，让她以舌尖轻柔侍奉，细细品味她每一次颤抖的动作。", cost: 10, pleasureDmg: 9,  selfPleasure: 6, cd: 0, currentCd: 0 },
-    { id:14, name: "女上位骑乘", desc: "让她攀上你的身体主导节奏——然后静静看她在自己掌控的律动中逐渐失控。", cost: 18, pleasureDmg: 14, selfPleasure: 12, cd: 1, currentCd: 0 },
-    { id:15, name: "高潮边缘控制", desc: "将她带至颤抖着的高潮边缘，在最后一刻骤然收手，让她在渴望与空落中苦苦煎熬。", cost: 16, pleasureDmg: 13, selfPleasure: 9, cd: 3, currentCd: 0 },
+    { id:11, name: "缓慢抽插", desc: "以缓慢而刻意的节奏律动腰胯，每一次深入都经过精心设计，让她一点一点地崩溃瓦解。", cost: 12, pleasureDmg: 14, selfPleasure: 8, cd: 1, currentCd: 0 },
+    { id:12, name: "激烈后入", desc: "双手扣住她的腰臀猛地向后拽入，从背后以原始而不加收敛的力道猛烈撞击。", cost: 18, pleasureDmg: 18, selfPleasure: 10, cd: 2, currentCd: 0 },
+    { id:13, name: "口交侍奉", desc: "将她的头向下压至你的腿间，让她以舌尖轻柔侍奉，细细品味她每一次颤抖的动作。", cost: 9, pleasureDmg: 11, selfPleasure: 6, cd: 0, currentCd: 0 },
+    { id:14, name: "女上位骑乘", desc: "让她攀上你的身体主导节奏——然后静静看她在自己掌控的律动中逐渐失控。", cost: 16, pleasureDmg: 16, selfPleasure: 12, cd: 1, currentCd: 0 },
+    { id:15, name: "高潮边缘控制", desc: "将她带至颤抖着的高潮边缘，在最后一刻骤然收手，让她在渴望与空落中苦苦煎熬。", cost: 14, pleasureDmg: 15, selfPleasure: 9, cd: 3, currentCd: 0 },
 
-    { id:16, name: "绳缚悬吊", desc: "将她双臂高高吊起，让她悬在空中任你摆布，无处逃遁，完全落入你的掌控之中。", cost: 22, pleasureDmg: 18, selfPleasure: 11, cd: 4, currentCd: 0 },
-    { id:17, name: "冰火两重天", desc: "将冰块沿她绯红的肌肤缓缓划过，随即以热蜡紧随其后，让她在每一次冷热交替中倒抽一口冷气。", cost: 20, pleasureDmg: 17, selfPleasure: 10, cd: 3, currentCd: 0 },
-    { id:18, name: "传教士深顶", desc: "将她按入床垫，以深沉有力的撞击贯穿，目光直视她的双眼，看着她的抵抗在凝视中一点点瓦解。", cost: 16, pleasureDmg: 15, selfPleasure: 9,  cd: 1, currentCd: 0 },
-    { id:19, name: "69互舔", desc: "将她拉入69体位，双方同时以口舌取悦对方，快感在两端同步攀升，再无退路可言。", cost: 13, pleasureDmg: 13, selfPleasure: 11, cd: 2, currentCd: 0 },
-    { id:20, name: "感官剥夺", desc: "为她蒙上眼罩、封住双耳，剥夺她的感知，让每一次触碰都放大成十倍的强烈刺激。", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 },
+    { id:16, name: "绳缚悬吊", desc: "将她双臂高高吊起，让她悬在空中任你摆布，无处逃遁，完全落入你的掌控之中。", cost: 20, pleasureDmg: 20, selfPleasure: 11, cd: 4, currentCd: 0 },
+    { id:17, name: "冰火两重天", desc: "将冰块沿她绯红的肌肤缓缓划过，随即以热蜡紧随其后，让她在每一次冷热交替中倒抽一口冷气。", cost: 18, pleasureDmg: 19, selfPleasure: 10, cd: 3, currentCd: 0 },
+    { id:18, name: "传教士深顶", desc: "将她按入床垫，以深沉有力的撞击贯穿，目光直视她的双眼，看着她的抵抗在凝视中一点点瓦解。", cost: 14, pleasureDmg: 17, selfPleasure: 9, cd: 1, currentCd: 0 },
+    { id:19, name: "69互舔", desc: "将她拉入69体位，双方同时以口舌取悦对方，快感在两端同步攀升，再无退路可言。", cost: 12, pleasureDmg: 15, selfPleasure: 11, cd: 2, currentCd: 0 },
+    { id:20, name: "感官剥夺", desc: "为她蒙上眼罩、封住双耳，剥夺她的感知，让每一次触碰都放大成十倍的强烈刺激。", cost: 17, pleasureDmg: 18, selfPleasure: 8, cd: 3, currentCd: 0 },
 
-    { id:21, name: "开腿夹", desc: "用开腿夹将她的双腿强制撑开，让她完全暴露在你面前，无处可逃", cost: 17, pleasureDmg: 14, selfPleasure: 7, cd: 3, currentCd: 0 },
-    { id:22, name: "项圈牵引", desc: "将项圈扣在她的颈间，轻扯牵引绳，彻底宣示你对她的支配权", cost: 13, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
-    { id:23, name: "大腿摩擦", desc: "缓慢地在她的大腿间摩擦，每一次移动都让紧张感悄然积累", cost: 10, pleasureDmg: 10, selfPleasure: 7, cd: 1, currentCd: 0 },
-    { id:24, name: "放缓节奏", desc: "主动放慢动作节奏，给自己一点短暂的喘息空间，重新整理状态", cost: 0, pleasureDmg: 0, selfPleasure: -10, hpHeal: 10, cd: 3, currentCd: 0 },
-    { id:25, name: "换个姿势", desc: "调整两人的姿势，趁机喘口气，稍稍打乱当前的节奏", cost: 0, pleasureDmg: 0, selfPleasure: -8, hpHeal: 8, cd: 2, currentCd: 0 }
+    { id:21, name: "开腿夹", desc: "用开腿夹将她的双腿强制撑开，让她完全暴露在你面前，无处可逃", cost: 15, pleasureDmg: 16, selfPleasure: 7, cd: 3, currentCd: 0 },
+    { id:22, name: "项圈牵引", desc: "将项圈扣在她的颈间，轻扯牵引绳，彻底宣示你对她的支配权", cost: 11, pleasureDmg: 13, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:23, name: "大腿摩擦", desc: "缓慢地在她的大腿间摩擦，每一次移动都让紧张感悄然积累", cost: 9, pleasureDmg: 12, selfPleasure: 7, cd: 1, currentCd: 0 },
+    { id:24, name: "放缓节奏", desc: "主动放慢动作节奏，给自己一点短暂的喘息空间，重新整理状态", cost: 0, pleasureDmg: 0, selfPleasure: -12, hpHeal: 12, cd: 3, currentCd: 0 },
+    { id:25, name: "换个姿势", desc: "调整两人的姿势，趁机喘口气，稍稍打乱当前的节奏", cost: 0, pleasureDmg: 0, selfPleasure: -10, hpHeal: 10, cd: 2, currentCd: 0 }
 ];
 
 // 胜利 & 失败结束语
@@ -496,40 +496,35 @@ function enemyTurn() {
     round++;
     log(`<b>第 ${round} 回合 —— Claude 行动</b>`, "#ff99cc");
 
-    const playerDanger  = player.pleasure >= 85;  // 玩家接近失败
-    const enemyDanger   = enemy.pleasure >= 75;   // Claude 接近失败
+    const playerDanger  = player.pleasure >= 85;
+    const enemyDanger   = enemy.pleasure >= 80;   // 从75提高到80
     const enemyLowHp    = enemy.hp <= 30;
-    const enemyCritical = enemy.pleasure >= 90;   // Claude 处于临界状态
+    const enemyCritical = enemy.pleasure >= 92;   // 从90提高到92
 
-    // 判断是否恢复：
-    // 快感较高、尚未到临界、玩家不在失败边缘、且随机概率通过时才恢复
     const shouldHeal = enemyDanger
         && !enemyCritical
         && !playerDanger
-        && Math.random() < 0.72;
+        && Math.random() < 0.62; // 从0.72降低到0.62
 
     if (shouldHeal) {
-        const healBonus = enemy.pleasure >= 85 ? 4 : 0;
-        const heal = Math.floor(Math.random() * 8) + 5 + healBonus;
-        const pleasureDrop = Math.floor(Math.random() * 6) + 6 + healBonus;
+        const healBonus = enemy.pleasure >= 88 ? 3 : 0;
+        const heal = Math.floor(Math.random() * 7) + 4 + healBonus; // 从8+5降低
+        const pleasureDrop = Math.floor(Math.random() * 5) + 5 + healBonus; // 从6+6降低
 
         enemy.hp = Math.min(100, enemy.hp + heal);
         enemy.pleasure = Math.max(0, enemy.pleasure - pleasureDrop);
 
         log(`Claude 暂时收敛动作，恢复了 ${heal} 点体力……`, "#88ffaa");
     } else {
-        // 攻击伤害随玩家快感升高而增加（乘胜追击）
-        const pressureBonus = player.pleasure >= 70 ? 4 : player.pleasure >= 50 ? 2 : 0;
-        const desperationBonus = enemyLowHp ? 3 : 0; // 体力极低时不顾一切
-        const dmgToPlayer = 10 + Math.random() * 8 + pressureBonus + desperationBonus;
+        const pressureBonus = player.pleasure >= 75 ? 2 : player.pleasure >= 55 ? 1 : 0; // 从4/2降低
+        const desperationBonus = enemyLowHp ? 2 : 0; // 从3降低到2
+        const dmgToPlayer = 9 + Math.random() * 7 + pressureBonus + desperationBonus; // 从10+8降低
 
-        // 处于危险时自身消耗降低（自我保护）
         const selfCost = enemyDanger
             ? 3 + Math.random() * 3
             : 5 + Math.random() * 5;
 
-        // 临界状态时自身快感增幅减小
-        const selfPleasureGain = enemyCritical ? 3 : 5 + Math.random() * 3;
+        const selfPleasureGain = enemyCritical ? 2 : 4 + Math.random() * 3; // 从5+3降低
 
         player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
         enemy.hp = Math.max(0, enemy.hp - selfCost);
