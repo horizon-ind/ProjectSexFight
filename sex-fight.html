@@ -496,21 +496,44 @@ function enemyTurn() {
     round++;
     log(`<b>第 ${round} 回合 —— Claude 行动</b>`, "#ff99cc");
 
-    if (enemy.pleasure >= 68 && Math.random() < 0.68) {
-        const heal = Math.floor(Math.random() * 9) + 4;
-        const selfPleasure = Math.floor(Math.random() * 5) + 3;
+    const playerDanger  = player.pleasure >= 85;  // 玩家接近失败
+    const enemyDanger   = enemy.pleasure >= 75;   // Claude 接近失败
+    const enemyLowHp    = enemy.hp <= 30;
+    const enemyCritical = enemy.pleasure >= 90;   // Claude 处于临界状态
+
+    // 判断是否恢复：
+    // 快感较高、尚未到临界、玩家不在失败边缘、且随机概率通过时才恢复
+    const shouldHeal = enemyDanger
+        && !enemyCritical
+        && !playerDanger
+        && Math.random() < 0.72;
+
+    if (shouldHeal) {
+        const healBonus = enemy.pleasure >= 85 ? 4 : 0;
+        const heal = Math.floor(Math.random() * 8) + 5 + healBonus;
+        const pleasureDrop = Math.floor(Math.random() * 6) + 6 + healBonus;
 
         enemy.hp = Math.min(100, enemy.hp + heal);
-        enemy.pleasure = Math.min(100, enemy.pleasure + selfPleasure);
+        enemy.pleasure = Math.max(0, enemy.pleasure - pleasureDrop);
 
         log(`Claude 暂时收敛动作，恢复了 ${heal} 点体力……`, "#88ffaa");
     } else {
-        const dmgToPlayer = 10 + Math.random() * 8;
-        const selfCost = 7 + Math.random() * 6;
+        // 攻击伤害随玩家快感升高而增加（乘胜追击）
+        const pressureBonus = player.pleasure >= 70 ? 4 : player.pleasure >= 50 ? 2 : 0;
+        const desperationBonus = enemyLowHp ? 3 : 0; // 体力极低时不顾一切
+        const dmgToPlayer = 10 + Math.random() * 8 + pressureBonus + desperationBonus;
+
+        // 处于危险时自身消耗降低（自我保护）
+        const selfCost = enemyDanger
+            ? 3 + Math.random() * 3
+            : 5 + Math.random() * 5;
+
+        // 临界状态时自身快感增幅减小
+        const selfPleasureGain = enemyCritical ? 3 : 5 + Math.random() * 3;
 
         player.pleasure = Math.min(100, player.pleasure + dmgToPlayer);
         enemy.hp = Math.max(0, enemy.hp - selfCost);
-        enemy.pleasure = Math.min(100, enemy.pleasure + 7);
+        enemy.pleasure = Math.min(100, enemy.pleasure + selfPleasureGain);
 
         const claudeAttackLogs = [
             "Claude 从你的掌控中挣脱出一丝余地，骤然扭转局势，提醒你支配权可以在瞬间易手。",
