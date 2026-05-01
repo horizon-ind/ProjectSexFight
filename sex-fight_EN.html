@@ -284,6 +284,7 @@ let player = { hp: 100, pleasure: 0 };
 let enemy = { hp: 100, pleasure: 0 };
 let round = 1;
 let gameOver = false;
+let activeSkills = [];
 
 const logEl = document.getElementById('log');
 
@@ -322,30 +323,26 @@ function getRandomSkills() {
 }
 
 function renderSkills() {
-    const currentSkills = getRandomSkills();
     const grid = document.getElementById('skill_grid');
     grid.innerHTML = '';
 
-    currentSkills.forEach(skill => {
+    const onCdSkills = allSkills.filter(s => s.currentCd > 0);
+    const available = allSkills.filter(s => s.currentCd === 0);
+    const shuffled = [...available].sort(() => 0.5 - Math.random()).slice(0, 6);
+
+    // Render the 6 available (rotating) skills
+    shuffled.forEach(skill => {
         const btn = document.createElement('div');
         btn.className = 'skill-btn';
-        
-        const onCd = skill.currentCd > 0;
         const noHp = skill.cost > 0 && player.hp < skill.cost;
-        const disabled = onCd || noHp || gameOver;
-
+        const disabled = noHp || gameOver;
         btn.style.opacity = disabled ? "0.5" : "1";
-
         btn.innerHTML = `
             <div class="skill-name">${skill.name}</div>
             <div class="skill-desc">${skill.desc}</div>
             <div class="skill-dmg">+${skill.pleasureDmg} Pleasure</div>
-            <div class="skill-cost">
-                ${skill.cost > 0 ? `-${skill.cost} Stamina` : 'Recovers 5-15 stamina'}
-                ${onCd ? ` <span style="color:#ffaa77">( On Cooldown ${skill.currentCd})</span>` : ''}
-            </div>
+            <div class="skill-cost">${skill.cost > 0 ? `-${skill.cost} Stamina` : 'Recovers 5-15 stamina'}</div>
         `;
-
         if (!disabled) btn.onclick = () => playerUseSkill(skill);
         grid.appendChild(btn);
     });
@@ -355,11 +352,44 @@ function renderSkills() {
     skipBtn.textContent = "Skip this round (Recovers stamina, slightly increase pleasure)";
     if (!gameOver) skipBtn.onclick = skipTurn;
     grid.appendChild(skipBtn);
+
+    // Render CD skills below as a locked row (if any)
+    if (onCdSkills.length > 0) {
+        const cdLabel = document.createElement('div');
+        cdLabel.style.cssText = 'grid-column:1/-1; font-size:0.82em; color:#ffaa77; margin-top:6px; text-align:center; opacity:0.8;';
+        cdLabel.textContent = '— On Cooldown —';
+        grid.appendChild(cdLabel);
+
+        onCdSkills.forEach(skill => {
+            const btn = document.createElement('div');
+            btn.className = 'skill-btn';
+            btn.style.opacity = "0.45";
+            btn.style.filter = "grayscale(0.7)";
+            btn.style.cursor = "not-allowed";
+            btn.innerHTML = `
+                <div class="skill-name">${skill.name}</div>
+                <div class="skill-desc">${skill.desc}</div>
+                <div class="skill-dmg">+${skill.pleasureDmg} Pleasure</div>
+                <div class="skill-cost">-${skill.cost} Stamina <span style="color:#ffaa77">(Cooldown: ${skill.currentCd})</span></div>
+            `;
+            grid.appendChild(btn);
+        });
+    }
+}
+
+function setInputDisabled(disabled) {
+    const grid = document.getElementById('skill_grid');
+    grid.querySelectorAll('.skill-btn, .skip-btn').forEach(btn => {
+        btn.style.pointerEvents = disabled ? 'none' : '';
+        if (disabled) btn.style.opacity = '0.45';
+        else btn.style.opacity = '';
+    });
 }
 
 function playerUseSkill(skill) {
     if (gameOver) return;
 
+    setInputDisabled(true);
     round++;
     log(`<b>Round ${round} —— You used "${skill.name}"</b>`, "#ff99cc");
 
@@ -385,12 +415,13 @@ function playerUseSkill(skill) {
     updateUI();
     if (checkGameOver()) return;
 
-    setTimeout(enemyTurn, 800);
+    setTimeout(enemyTurn, 1500);
 }
 
 function skipTurn() {
     if (gameOver) return;
 
+    setInputDisabled(true);
     round++;
     const heal = Math.floor(Math.random() * 11) + 3;
     const selfPleasure = Math.floor(Math.random() * 5) + 3;
@@ -404,7 +435,7 @@ function skipTurn() {
     updateUI();
     if (checkGameOver()) return;
 
-    setTimeout(enemyTurn, 700);
+    setTimeout(enemyTurn, 1500);
 }
 
 function enemyTurn() {
@@ -433,8 +464,11 @@ function enemyTurn() {
     }
 
     updateUI();
+    allSkills.forEach(s => { if (s.currentCd > 0) s.currentCd--; });
     renderSkills();
-    checkGameOver();
+    if (!checkGameOver()) {
+        setInputDisabled(false);
+    }
 }
 
 function checkGameOver() {
@@ -487,6 +521,7 @@ function initGame() {
     gameOver = false;
 
     allSkills.forEach(skill => skill.currentCd = 0);
+    activeSkills = [...allSkills].sort(() => 0.5 - Math.random()).slice(0, 6);
 
     logEl.innerHTML = `<div style="color:#ff99cc;text-align:center;">The battle have started. Whoever orgasm first loses.</div>`;
 
