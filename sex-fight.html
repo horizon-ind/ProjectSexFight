@@ -107,7 +107,7 @@
         text-align: center;
         margin: 12px 0 8px;
         color: #ff99cc;
-        font-size: 1.15em;
+        font-size: 0.82em;
     }
     .skills {
         display: grid;
@@ -382,9 +382,6 @@ function setInputDisabled(disabled) {
     const grid = document.getElementById('skill_grid');
     grid.querySelectorAll('.skill-btn, .skip-btn').forEach(btn => {
         btn.style.pointerEvents = disabled ? 'none' : '';
-        btn.style.opacity = disabled
-            ? (btn.style.opacity === '1' || btn.style.opacity === '' ? '0.45' : btn.style.opacity)
-            : '';
     });
 }
 
@@ -402,13 +399,8 @@ function playerUseSkill(skill) {
         log("Claude 的身体轻轻颤动，呼吸逐渐急促……", "#ff77bb");
     }
 
-    if (skill.selfPleasure !== undefined) {
-        player.pleasure = Math.min(100, player.pleasure + skill.selfPleasure);
-    }
-
     if (skill.hpHeal) {
         player.hp = Math.min(100, player.hp + skill.hpHeal);
-        player.pleasure = Math.max(0, player.pleasure + skill.selfPleasure);
         log("你深呼吸，努力平复翻涌的快感……", "#88ffaa");
     }
 
@@ -416,6 +408,13 @@ function playerUseSkill(skill) {
 
     updateUI();
     if (checkGameOver()) return;
+
+    // Apply selfPleasure only after confirming enemy hasn't lost
+    if (skill.selfPleasure !== undefined) {
+        player.pleasure = Math.min(100, Math.max(0, player.pleasure + skill.selfPleasure));
+        updateUI();
+        if (checkGameOver()) return;
+    }
 
     setTimeout(enemyTurn, 1500);
 }
@@ -425,8 +424,8 @@ function skipTurn() {
 
     setInputDisabled(true);
     round++;
-    const heal = Math.floor(Math.random() * 11) + 3;
-    const selfPleasure = Math.floor(Math.random() * 5) + 3;
+    const heal = Math.floor(Math.random() * 5) + 8;
+    const selfPleasure = Math.floor(Math.random() * 4) + 2;
 
     log(`<b>第 ${round} 回合 —— 你选择了跳过一轮</b>`, "#ff99cc");
     log(`你暂时放缓动作，恢复了 ${heal} 点体力……`, "#88ffaa");
@@ -467,8 +466,8 @@ function enemyTurn() {
 
     updateUI();
     allSkills.forEach(s => { if (s.currentCd > 0) s.currentCd--; });
-    renderSkills();
     if (!checkGameOver()) {
+        renderSkills();
         setInputDisabled(false);
     }
 }
