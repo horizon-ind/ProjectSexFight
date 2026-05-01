@@ -242,28 +242,34 @@
 <script>
 // ====================== 20 abilities ======================
 const allSkills = [
-    { id:1,  name: "Rope bondage", desc: "Tie her hands to the bed with ropes.", cost: 12, pleasureDmg: 10, selfPleasure: 5, cd: 2, currentCd: 0 },
-    { id:2,  name: "Hot wax play", desc: "Drip hot wax onto her sensitive areas.", cost: 18, pleasureDmg: 13, selfPleasure: 6, cd: 3, currentCd: 0 },
-    { id:3,  name: "Whip teasing", desc: "Whip her breasts and thighs with a leather whip.", cost: 15, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
-    { id:4,  name: "Light choking", desc: "Choke her neck and feel her tremble.", cost: 20, pleasureDmg: 14, selfPleasure: 8, cd: 3, currentCd: 0 },
-    { id:5,  name: "Gag training", desc: "Stuff her mouth and only let her make muffled moans.", cost: 14, pleasureDmg: 10, selfPleasure: 4, cd: 2, currentCd: 0 },
-    { id:6,  name: "Nipple clamp torture", desc: "Put nipple clamps on her and gently tug them.", cost: 16, pleasureDmg: 12, selfPleasure: 6, cd: 2, currentCd: 0 },
-    { id:7,  name: "Deepthroat", desc: "Grab her hair and force her into deepthroat.", cost: 22, pleasureDmg: 15, selfPleasure: 9, cd: 3, currentCd: 0 },
-     { id:8, name: "Mounted restraint", desc: "Forcefully mount her and thrust intensely.", cost: 25, pleasureDmg: 17, selfPleasure: 11, cd: 0, currentCd: 0 },
-    { id:9,  name: "BDSM Training", desc: "Ultimate ability - Multiple stimulations at the same time.", cost: 35, pleasureDmg: 26, selfPleasure: 14, cd: 6, currentCd: 0 },
-    { id:10, name: "Take a breath", desc: "Take deep breaths to recover stamina and calm down.", cost: 0, pleasureDmg: 0, selfPleasure: -18, hpHeal: 18, cd: 5, currentCd: 0 },
+    { id:1,  name: "Rope bondage", desc: "Bind her wrists to the headboard with coarse rope, leaving her helpless to resist your every touch.", cost: 12, pleasureDmg: 10, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:2,  name: "Hot wax play", desc: "Tilt the candle slowly over her bare skin, letting each burning drop draw a gasp from her lips.", cost: 18, pleasureDmg: 13, selfPleasure: 6, cd: 3, currentCd: 0 },
+    { id:3,  name: "Whip teasing", desc: "Crack the leather whip across her chest and thighs, each strike leaving a faint, stinging bloom.", cost: 15, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:4,  name: "Light choking", desc: "Wrap your hand around her throat and squeeze gently, feeling her pulse quicken beneath your palm.", cost: 20, pleasureDmg: 14, selfPleasure: 8, cd: 3, currentCd: 0 },
+    { id:5,  name: "Gag training", desc: "Push the gag between her lips and secure it, reducing her protests to nothing but desperate, muffled whimpers.", cost: 14, pleasureDmg: 10, selfPleasure: 4, cd: 2, currentCd: 0 },
+    { id:6,  name: "Nipple clamp torture", desc: "Fasten the clamps onto her nipples and give the chain a slow, deliberate tug, watching her squirm.", cost: 16, pleasureDmg: 12, selfPleasure: 6, cd: 2, currentCd: 0 },
+    { id:7,  name: "Deepthroat", desc: "Tangle your fingers in her hair and guide her head down firmly, leaving her no choice but to take it all.", cost: 22, pleasureDmg: 15, selfPleasure: 9, cd: 3, currentCd: 0 },
+    { id:8,  name: "Mounted restraint", desc: "Pin her beneath you and drive into her with relentless force, each thrust stealing the breath from her lungs.", cost: 25, pleasureDmg: 17, selfPleasure: 11, cd: 0, currentCd: 0 },
+    { id:9,  name: "BDSM Training", desc: "Unleash everything at once — restraints, stimulation, and dominance — pushing her senses far beyond their limit.", cost: 35, pleasureDmg: 26, selfPleasure: 14, cd: 6, currentCd: 0 },
+    { id:10, name: "Take a breath", desc: "Step back and breathe deeply, letting the tension drain from your body and your composure return.", cost: 0, pleasureDmg: 0, selfPleasure: -18, hpHeal: 18, cd: 5, currentCd: 0 },
 
-    { id:11, name: "Slow Thrusting", desc: "Thrust her slowly and deeply.", cost: 14, pleasureDmg: 12, selfPleasure: 8, cd: 1, currentCd: 0 },
-    { id:12, name: "Doggystyle", desc: "Pound her fiercely from behind.", cost: 20, pleasureDmg: 16, selfPleasure: 10, cd: 2, currentCd: 0 },
-    { id:13, name: "Oral service", desc: "Let her gently serve you with her mouth.", cost: 10, pleasureDmg: 9,  selfPleasure: 6, cd: 0, currentCd: 0 },
-    { id:14, name: "Cowgirl riding", desc: "Let her take the initiative and ride on top.", cost: 18, pleasureDmg: 14, selfPleasure: 12, cd: 1, currentCd: 0 },
-    { id:15, name: "Edging control", desc: "Bring her to the edge of orgasm but don't let her cum.", cost: 16, pleasureDmg: 13, selfPleasure: 9, cd: 3, currentCd: 0 },
+    { id:11, name: "Slow Thrusting", desc: "Roll your hips in a slow, deliberate rhythm, each deep stroke designed to make her unravel inch by inch.", cost: 14, pleasureDmg: 12, selfPleasure: 8, cd: 1, currentCd: 0 },
+    { id:12, name: "Doggystyle", desc: "Grab her hips and pull her back hard onto you, pounding from behind with raw, unrestrained force.", cost: 20, pleasureDmg: 16, selfPleasure: 10, cd: 2, currentCd: 0 },
+    { id:13, name: "Oral service", desc: "Push her head down between your legs and let her work with her tongue, savoring every trembling motion.", cost: 10, pleasureDmg: 9,  selfPleasure: 6, cd: 0, currentCd: 0 },
+    { id:14, name: "Cowgirl riding", desc: "Let her climb on top and set the pace — then watch her lose control of the rhythm she started.", cost: 18, pleasureDmg: 14, selfPleasure: 12, cd: 1, currentCd: 0 },
+    { id:15, name: "Edging control", desc: "Bring her trembling to the very brink of release, then pull back just in time, leaving her desperate and aching.", cost: 16, pleasureDmg: 13, selfPleasure: 9, cd: 3, currentCd: 0 },
 
-    { id:16, name: "Suspension bondage", desc: "Suspend Claude above for complete restraint.", cost: 22, pleasureDmg: 18, selfPleasure: 11, cd: 4, currentCd: 0 },
-    { id:17, name: "Ice and Fire", desc: "Alternate between ice and hot wax on her sensitive spots", cost: 20, pleasureDmg: 17, selfPleasure: 10, cd: 3, currentCd: 0 },
-    { id:18, name: "Missionary", desc: "Face-to-face deep and powerful pounding.", cost: 16, pleasureDmg: 15, selfPleasure: 9,  cd: 1, currentCd: 0 },
-    { id:19, name: "69 Oral", desc: "Both pleasure each other with mouths and tongues simultaneously.", cost: 13, pleasureDmg: 13, selfPleasure: 11, cd: 2, currentCd: 0 },
-    { id:20, name: "Sensory deprivation", desc: "Put a blindfold and earplugs on her to heighten sensory stimulation.", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 }
+    { id:16, name: "Suspension bondage", desc: "Hoist her arms above her head and leave her suspended, completely at your mercy with nowhere to go.", cost: 22, pleasureDmg: 18, selfPleasure: 11, cd: 4, currentCd: 0 },
+    { id:17, name: "Ice and Fire", desc: "Trail ice across her flushed skin, then follow it with a drip of hot wax, making her gasp at every contrast.", cost: 20, pleasureDmg: 17, selfPleasure: 10, cd: 3, currentCd: 0 },
+    { id:18, name: "Missionary", desc: "Press her down into the mattress and thrust deep and hard, holding eye contact as her resistance crumbles.", cost: 16, pleasureDmg: 15, selfPleasure: 9,  cd: 1, currentCd: 0 },
+    { id:19, name: "69 Oral", desc: "Pull her into a 69 and work each other at the same time, pleasure building on both ends with nowhere to hold back.", cost: 13, pleasureDmg: 13, selfPleasure: 11, cd: 2, currentCd: 0 },
+    { id:20, name: "Sensory deprivation", desc: "Blindfold her and seal her ears, stripping away her senses so that every touch feels ten times more intense.", cost: 19, pleasureDmg: 16, selfPleasure: 8,  cd: 3, currentCd: 0 },
+
+    { id:21, name: "Spreader Bar", desc: "Lock her legs wide open with a spreader bar, leaving her completely exposed and helpless.", cost: 17, pleasureDmg: 14, selfPleasure: 7, cd: 3, currentCd: 0 },
+    { id:22, name: "Collar & Leash", desc: "Clip a collar around her neck and tug the leash, asserting total dominance.", cost: 13, pleasureDmg: 11, selfPleasure: 5, cd: 2, currentCd: 0 },
+    { id:23, name: "Thigh Grinding", desc: "Grind against her thigh slowly, building tension with each movement.", cost: 10, pleasureDmg: 10, selfPleasure: 7, cd: 1, currentCd: 0 },
+    { id:24, name: "Slow Down", desc: "Ease off the pace, giving yourself a brief moment to collect yourself.", cost: 0, pleasureDmg: 0, selfPleasure: -10, hpHeal: 10, cd: 3, currentCd: 0 },
+    { id:25, name: "Change Position", desc: "Shift positions to buy yourself a breath, slightly breaking the rhythm.", cost: 0, pleasureDmg: 0, selfPleasure: -8, hpHeal: 8, cd: 2, currentCd: 0 }
 ];
 // Concluding remarks for victory and defeat
 const winEndings = [
